@@ -125,11 +125,15 @@ binary_sensor:
 
 switch:
 
+  ### RELAY 1 ###
+
   - platform: gpio
     name: Study Powerstrip Relay 1
     id: relay_1
     pin: GPIO05
     restore_mode: RESTORE_DEFAULT_OFF
+
+  ### RELAY 2 ###
 
   - platform: gpio
     name: Study Powerstrip Relay 2
@@ -137,17 +141,23 @@ switch:
     pin: GPIO04
     restore_mode: RESTORE_DEFAULT_OFF
 
+  ### RELAY 3 ###
+
   - platform: gpio
     name: Study Powerstrip Relay 3 
     id: relay_3
     pin: GPIO12
     restore_mode: RESTORE_DEFAULT_OFF
 
+  ### RELAY 4 ###
+
   - platform: gpio
     name: Study Powerstrip Relay 4
     id: relay_4
     pin: GPIO13
     restore_mode: RESTORE_DEFAULT_OFF
+
+  ### RELAY 5 ###
 
   - platform: gpio
     name: Study Powerstrip Relay 5
