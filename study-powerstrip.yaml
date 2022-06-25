@@ -105,6 +105,8 @@ sensor:
 
 binary_sensor:
 
+  ### POWER BUTTON RELATED ACTION ###
+
   - platform: gpio
     id: power_button
     pin:
