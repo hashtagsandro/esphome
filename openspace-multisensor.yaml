@@ -1,5 +1,4 @@
 ---
-
 ##############################
 ### OPENSPACE-MULTISENSORS ###
 ##############################
@@ -54,7 +53,7 @@ time:
 api:
   password: !secret api_password
 
-### Enable OTA ###
+### ENABLE OTA ###
 
 ota:
   password: !secret ota_password
