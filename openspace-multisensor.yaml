@@ -3,7 +3,10 @@
 ### OPENSPACE-MULTISENSORS ###
 ##############################
 
+
+################
 #### PINOUT ####
+################
 
 ### D3 --> VINDRIKTNING BOARD    ###
 ### D7 --> AM312 MOTION SENSOR   ###
@@ -11,7 +14,9 @@
 ### D2 --> AHT10 SDA             ###
 ### D1 --> AHT10 SCL             ###
 
-### DEFINE BOARD HARDWARE ###
+###########################
+### BOARD CONFIGURATION ###
+###########################
 
 esphome:
   name: openspace-multisensor
@@ -19,20 +24,26 @@ esphome:
   platform: ESP8266
   board: d1_mini
   esp8266_restore_from_flash: false
-  
-### ENABLE LOGGING ###
+ 
+#########################
+### LOG CONFIGURATION ###
+#########################
 
 logger:
   level: DEBUG
 
-### STATUS LED ###
+################################
+### STATUS LED CONFIGURATION ###
+################################
 
 status_led:
   pin:
     number: D4
     inverted: true
 
-### WIFI SETTINGS ###
+##########################
+### WIFI CONFIGURATION ###
+##########################
 
 wifi:
   ssid: !secret wifi_ssid
@@ -40,14 +51,18 @@ wifi:
   fast_connect: true
   domain: !secret domain
   ap:
-    ssid: "Openspace Multisensor Fallback Hotspot"
+    ssid: "Openspace Multisensor Hotspot"
     password: !secret hotspot_password
 
-### ENABLE WIFI CAPTIVE PORTAL IF SOMETHING GO WRONG ###
+####################################
+### CAPTIVE PORTAL CONFIGURATION ###
+####################################
 
 captive_portal:
 
-### TIME SYNC ###
+#########################
+### NTP CONFIGURATION ###
+#########################
 
 time:
   - platform: sntp
@@ -55,34 +70,44 @@ time:
     servers:
       - !secret ntp_server
 
-### ENABLE HOME ASSISTANT API ###
+#########################
+### API CONFIGURATION ###
+#########################
 
 api:
   password: !secret api_password
 
-### ENABLE OTA ###
+#########################
+### OTA CONFIGURATION ###
+#########################
 
 ota:
   password: !secret ota_password
 
-### FIRMWARE VERSION ###
+#################################
+### TEXT SENSOR CONFIGURATION ###
+#################################
 
 text_sensor:
 
-### ESPHOME FIRMWARE VERSION ###
+  ### FIRMWARE VERSION ###
 
   - platform: version
     name: "Openspace Multisensor Version"
     id: openspace_version
+    icon: "mdi:all-inclusive-box"
 
-### IP ADDRESS ###
+  ### IP ADDRESS ###
 
   - platform: wifi_info
     ip_address:
       name: "OpenSpace Multisensor IP"
-      id: openspace_ip  
+      id: openspace_ip
+      icon: mdi:ip-network 
 
-### ENABLE WEB SERVER ###
+################################
+### WEB SERVER CONFIGURATION ###
+################################
 
 web_server:
   port: !secret web_server_port
@@ -90,22 +115,28 @@ web_server:
   auth:
     username: !secret web_server_username
     password: !secret web_server_password
-    
-### ENABLE I2C WITH AUTOSCAN ###
+
+#########################    
+### I2C CONFIGURATION ###
+#########################
 
 i2c:
   sda: D2
   scl: D1
   scan: false
 
-### ENABLE UART TO IKEA BOARD ###
+##########################
+### UART CONFIGURATION ###
+##########################
 
 uart:
   rx_pin: D3
   id: uart1
   baud_rate: 9600
 
+############################
 ### SENSOR CONFIGURATION ###
+############################
 
 sensor:
 
@@ -122,9 +153,13 @@ sensor:
     temperature:
       name: "Openspace Temperature"
       id: openspace_temperature
+      unit_of_measurement: "°C"
+      accuracy_decimals: 2
+      icon: "mdi:temperature-celsius"
     humidity:
       name: "Openspace Humidity"
       id: openspace_humidity
+      icon: "mdi:water-percent"
     update_interval: 600s
 
   ### PM 2.5 ###
@@ -132,6 +167,7 @@ sensor:
   - platform: pm1006
     pm_2_5:
       name: "Openspace PM2.5"
+      icon: "mdi:blur"
 
   ### BRIGHTNESS ###
     
@@ -144,15 +180,22 @@ sensor:
           return (x / 10000.0) * 2000000.0;
     update_interval: 1s
 
-### MOTION ###
-    
+###################################
+### BINARY SENSOR CONFIGURATION ###
+###################################
+
 binary_sensor:
+
+ ### MOTION ###
+
   - platform: gpio
     pin: D7
     name: "Openspace Motion"
     device_class: motion
 
-### SWITCHES ###
+##############################
+### SWITCHES CONFIGURATION ###
+##############################
 
 switch:
 
