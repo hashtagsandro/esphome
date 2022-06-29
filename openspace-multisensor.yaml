@@ -154,7 +154,7 @@ sensor:
       name: "Openspace Temperature"
       id: openspace_temperature
       unit_of_measurement: "°C"
-      accuracy_decimals: 2
+      accuracy_decimals: 1
       icon: "mdi:temperature-celsius"
     humidity:
       name: "Openspace Humidity"
