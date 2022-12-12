@@ -1,0 +1,252 @@
+---
+##########################
+### STUDY-MULTISENSORS ###
+##########################
+
+
+################
+#### PINOUT ####
+################
+
+### GPIO33 --> VINDRIKTNING BOARD  ###
+### GPIO32 --> AM312 MOTION SENSOR ###
+### GPIO21 --> AHT10 SDA           ###
+### GPIO22 --> AHT10 SCL           ###
+
+#####################
+### SUBSTITUTIONS ###
+#####################
+
+substitutions:
+  device_name: "Study Multisensor"
+  device_id: "study_multisensor"
+
+###########################
+### BOARD CONFIGURATION ###
+###########################
+
+esphome:
+  name: study-multisensor
+  platform: ESP32
+  board: wemos_d1_mini32
+ 
+#########################
+### LOG CONFIGURATION ###
+#########################
+
+logger:
+  level: INFO
+
+##########################
+### WIFI CONFIGURATION ###
+##########################
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  fast_connect: true
+  domain: !secret domain
+  ap:
+    ssid: "${device_name} Hotspot"
+    password: !secret hotspot_password
+
+####################################
+### CAPTIVE PORTAL CONFIGURATION ###
+####################################
+
+captive_portal:
+
+#########################
+### NTP CONFIGURATION ###
+#########################
+
+time:
+  - platform: sntp
+    id: sntp_time
+    servers:
+      - !secret ntp_server
+
+#########################
+### API CONFIGURATION ###
+#########################
+
+api:
+  password: !secret api_password
+
+#########################
+### OTA CONFIGURATION ###
+#########################
+
+ota:
+  password: !secret ota_password
+
+#################################
+### TEXT SENSOR CONFIGURATION ###
+#################################
+
+text_sensor:
+
+  ### FIRMWARE VERSION ###
+
+  - platform: version
+    name: "${device_name} Version"
+    id: "${device_id}_version"
+    icon: "mdi:all-inclusive-box"
+
+  ### IP ADDRESS ###
+
+  - platform: wifi_info
+    ip_address:
+      name: "${device_name} IP"
+      id: "${device_id}_ip"
+      icon: mdi:ip-network
+    mac_address:
+      name: "${device_name} Wifi MAC Address"
+      id: "${device_id}_macaddress"
+      icon: mdi:expansion-card 
+
+################################
+### WEB SERVER CONFIGURATION ###
+################################
+
+web_server:
+  port: !secret web_server_port
+  ota: true
+  local: false
+  version: 2
+  auth:
+    username: !secret web_server_username
+    password: !secret web_server_password
+
+#########################    
+### I2C CONFIGURATION ###
+#########################
+
+i2c:
+  sda: GPIO21
+  scl: GPIO22
+  scan: false
+
+##########################
+### UART CONFIGURATION ###
+##########################
+
+uart:
+  rx_pin: GPIO33
+  id: "${device_id}_uart"
+  baud_rate: 9600
+
+############################
+### SENSOR CONFIGURATION ###
+############################
+
+sensor:
+
+ ### BOARD TEMPERATURE ###
+
+  - platform: template
+    name: "${device_name} Board Temperature"
+    id: "${device_id}_temp"
+    lambda: return temperatureRead();
+    unit_of_measurement: "°C"
+    update_interval: 1800s
+ 
+ ### BLE SIGNAL ###
+
+  - platform: ble_rssi
+    mac_address: !secret mac_amazfit_sandro
+    name: "${device_name} Amazfit Bip Sandro RSSI"
+
+  - platform: ble_rssi
+    mac_address: !secret mac_filo_black
+    name: "${device_name} Filo Black RSSI" 
+
+  - platform: ble_rssi
+    mac_address: !secret mac_filo_red
+    name: "${device_name} Filo Red RSSI"       
+
+  - platform: ble_rssi
+    mac_address: !secret mac_filo_blue
+    name: "${device_name} Filo Blue RSSI"    
+
+  ### AMBIENT TEMPERATURE AND HUMIDITY ### 
+
+  - platform: aht10
+    temperature:
+      name: "${device_name} Temperature"
+      id: "${device_id}_temperature"
+      unit_of_measurement: "°C"
+      accuracy_decimals: 1
+      icon: "mdi:temperature-celsius"
+    humidity:
+      name: "${device_name} Humidity"
+      id: "${device_id}_humidity"
+      icon: "mdi:water-percent"
+    update_interval: 300s
+
+  ### AMBIENT PM 2.5 ###
+
+  - platform: pm1006
+    pm_2_5:
+      name: "${device_name} PM2.5"
+      icon: "mdi:blur"
+      id: "${device_id}_pm25"
+
+####################
+### BLE TRACKING ###
+####################
+
+esp32_ble_tracker:
+  scan_parameters:
+    active: false
+
+###################################
+### BINARY SENSOR CONFIGURATION ###
+###################################
+
+binary_sensor:
+
+ ### MOTION ###
+
+  - platform: gpio  
+    pin: GPIO32
+    name: "${device_name} Motion"
+    device_class: motion
+
+ ### BLE TRACKING ###
+
+  - platform: ble_presence
+    mac_address: !secret mac_amazfit_sandro
+    name: "${device_name} Amazfit Bip Sandro"
+
+  - platform: ble_presence
+    mac_address: !secret mac_filo_black
+    name: "${device_name} Filo Black"
+
+  - platform: ble_presence
+    mac_address: !secret mac_filo_red
+    name: "${device_name} Filo Red"
+
+  - platform: ble_presence
+    mac_address: !secret mac_filo_blue
+    name: "${device_name} Filo Blue"
+
+##############################
+### SWITCHES CONFIGURATION ###
+##############################
+
+switch:
+
+  ### RESTART ###
+
+  - platform: restart
+    name: "${device_name} Restart"
+
+  ### RESTART SAFE MODE ###  
+
+  - platform: safe_mode
+    name: "${device_name} Restart (Safe Mode OTA)"
+
+...
+
+### EOF ###
