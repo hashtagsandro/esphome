@@ -14,13 +14,21 @@
 ### D2 --> AHT10 SDA             ###
 ### D1 --> AHT10 SCL             ###
 
+#####################
+### SUBSTITUTIONS ###
+#####################
+
+#substitutions:
+#  device_name: "Study Multisensor"
+#  device_id: "study_multisensor"
+
 ###########################
 ### BOARD CONFIGURATION ###
 ###########################
 
 esphome:
   name: openspace-multisensor
-  comment: Openspace Multisensor ( TEMP HUM PM 2.5 MOTION )
+  comment: TEMP HUM PM 2.5 MOTION SENSOR
   platform: ESP8266
   board: d1_mini
   esp8266_restore_from_flash: false
@@ -30,8 +38,8 @@ esphome:
 #########################
 
 logger:
-  level: DEBUG
-
+  level: INFO
+  
 ################################
 ### STATUS LED CONFIGURATION ###
 ################################
@@ -75,7 +83,8 @@ time:
 #########################
 
 api:
-  password: !secret api_password
+  encryption:
+    key: !secret api_key
 
 #########################
 ### OTA CONFIGURATION ###
@@ -96,6 +105,7 @@ text_sensor:
     name: "Openspace Multisensor Version"
     id: openspace_version
     icon: "mdi:all-inclusive-box"
+    hide_timestamp: true
 
   ### IP ADDRESS ###
 
@@ -103,7 +113,11 @@ text_sensor:
     ip_address:
       name: "OpenSpace Multisensor IP"
       id: openspace_ip
-      icon: mdi:ip-network 
+      icon: mdi:ip-network
+    mac_address:
+      name: "OpenSpace Multisensor Wifi MAC Address"
+      id: openspace_macaddress
+      icon: mdi:expansion-card
 
 ################################
 ### WEB SERVER CONFIGURATION ###
@@ -111,7 +125,7 @@ text_sensor:
 
 web_server:
   port: !secret web_server_port
-  local: true
+  #local: true
   auth:
     username: !secret web_server_username
     password: !secret web_server_password
@@ -160,7 +174,7 @@ sensor:
       name: "Openspace Humidity"
       id: openspace_humidity
       icon: "mdi:water-percent"
-    update_interval: 600s
+    update_interval: 300s
 
   ### PM 2.5 ###
 

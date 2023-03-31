@@ -35,7 +35,7 @@ esphome:
 #########################
 
 logger:
-  level: INFO
+  level: DEBUG
 
 ##########################
 ### WIFI CONFIGURATION ###
@@ -44,7 +44,7 @@ logger:
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
-  fast_connect: true
+  fast_connect: false
   domain: !secret domain
   ap:
     ssid: "${device_name} Hotspot"
@@ -71,7 +71,8 @@ time:
 #########################
 
 api:
-  password: !secret api_password
+  encryption:
+    key: !secret api_key
 
 #########################
 ### OTA CONFIGURATION ###
@@ -191,6 +192,19 @@ sensor:
       name: "${device_name} PM2.5"
       icon: "mdi:blur"
       id: "${device_id}_pm25"
+
+  ### XIAOMI FLOWER SENSOR ###
+
+  - platform: xiaomi_hhccjcy01
+    mac_address: !secret mac_xiaomi_hhccjcy01
+    temperature:
+      name: "Ficus Ginseng Bonsai Temperature"
+    moisture:
+      name: "Ficus Ginseng Bonsai Moisture"
+    illuminance:
+      name: "Ficus Ginseng Bonsai Illuminance"
+    conductivity:
+      name: "Ficus Ginseng Bonsai Soil Conductivity"
 
 ####################
 ### BLE TRACKING ###
