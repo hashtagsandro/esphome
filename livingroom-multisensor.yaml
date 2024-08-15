@@ -1,7 +1,7 @@
 ---
-##############################
-### OPENSPACE-MULTISENSORS ###
-##############################
+###############################
+### LIVINGROOM-MULTISENSORS ###
+###############################
 
 
 ################
@@ -19,15 +19,15 @@
 #####################
 
 #substitutions:
-#  device_name: "Study Multisensor"
-#  device_id: "study_multisensor"
+#  device_name: "Livingroom Multisensor"
+#  device_id: "livingroom_multisensor"
 
 ###########################
 ### BOARD CONFIGURATION ###
 ###########################
 
 esphome:
-  name: openspace-multisensor
+  name: livingroom-multisensor
   comment: TEMP HUM PM 2.5 MOTION SENSOR
   platform: ESP8266
   board: d1_mini
@@ -38,7 +38,7 @@ esphome:
 #########################
 
 logger:
-  level: INFO
+  level: DEBUG
   
 ################################
 ### STATUS LED CONFIGURATION ###
@@ -59,7 +59,7 @@ wifi:
   fast_connect: true
   domain: !secret domain
   ap:
-    ssid: "Openspace Multisensor Hotspot"
+    ssid: "Livingroom Multisensor Hotspot"
     password: !secret hotspot_password
 
 ####################################
@@ -91,7 +91,8 @@ api:
 #########################
 
 ota:
-  password: !secret ota_password
+  - platform: esphome
+    password: !secret ota_password
 
 #################################
 ### TEXT SENSOR CONFIGURATION ###
@@ -102,8 +103,8 @@ text_sensor:
   ### FIRMWARE VERSION ###
 
   - platform: version
-    name: "Openspace Multisensor Version"
-    id: openspace_version
+    name: "Livingroom Multisensor Version"
+    id: livingroom_version
     icon: "mdi:all-inclusive-box"
     hide_timestamp: true
 
@@ -111,12 +112,12 @@ text_sensor:
 
   - platform: wifi_info
     ip_address:
-      name: "OpenSpace Multisensor IP"
-      id: openspace_ip
+      name: "Livingroom Multisensor IP"
+      id: livingroom_ip
       icon: mdi:ip-network
     mac_address:
-      name: "OpenSpace Multisensor Wifi MAC Address"
-      id: openspace_macaddress
+      name: "Livingroom Multisensor Wifi MAC Address"
+      id: livingroom_macaddress
       icon: mdi:expansion-card
 
 ################################
@@ -125,7 +126,9 @@ text_sensor:
 
 web_server:
   port: !secret web_server_port
-  #local: true
+  ota: true
+  local: true
+  version: 2
   auth:
     username: !secret web_server_username
     password: !secret web_server_password
@@ -137,7 +140,7 @@ web_server:
 i2c:
   sda: D2
   scl: D1
-  scan: false
+  scan: true
 
 ##########################
 ### UART CONFIGURATION ###
@@ -145,7 +148,6 @@ i2c:
 
 uart:
   rx_pin: D3
-  id: uart1
   baud_rate: 9600
 
 ############################
@@ -157,7 +159,7 @@ sensor:
   ### WIFI SIGNAL ###
 
   - platform: wifi_signal
-    name: "Openspace Multisensor WiFi Signal"
+    name: "Livingroom Multisensor WiFi Signal"
     update_interval: 60s
 
   ### TEMPERATURE AND HUMIDITY ### 
@@ -165,14 +167,16 @@ sensor:
   - platform: aht10
     address: 0x38
     temperature:
-      name: "Openspace Temperature"
-      id: openspace_temperature
+      name: "Livingroom Temperature"
+      id: livingroom_temperature
       unit_of_measurement: "°C"
       accuracy_decimals: 1
+      filters:
+        offset: -2      
       icon: "mdi:temperature-celsius"
     humidity:
-      name: "Openspace Humidity"
-      id: openspace_humidity
+      name: "Livingroom Humidity"
+      id: livingroom_humidity
       icon: "mdi:water-percent"
     update_interval: 300s
 
@@ -180,19 +184,30 @@ sensor:
 
   - platform: pm1006
     pm_2_5:
-      name: "Openspace PM2.5"
+      name: "Livingroom PM2.5"
+      id: livingroom_pm25
       icon: "mdi:blur"
-
+      filters:
+        - sliding_window_moving_average:
+            window_size: 10
+            send_every: 10
+            
   ### BRIGHTNESS ###
     
   - platform: adc
     pin: A0
-    name: "Openspace Brightness"
+    name: "Livingroom Brightness"
     unit_of_measurement: lux
     filters:
       - lambda: |-
           return (x / 10000.0) * 2000000.0;
     update_interval: 1s
+
+  ### UPTIME ###
+  
+  - platform: uptime
+    type: seconds
+    name: Uptime Sensor
 
 ###################################
 ### BINARY SENSOR CONFIGURATION ###
@@ -204,7 +219,7 @@ binary_sensor:
 
   - platform: gpio
     pin: D7
-    name: "Openspace Motion"
+    name: "Livingroom Motion"
     device_class: motion
 
 ##############################
@@ -216,12 +231,12 @@ switch:
   ### RESTART ###
 
   - platform: restart
-    name: "Openspace Restart"
+    name: "Livingroom Restart"
 
   ### RESTART SAFE MODE ###  
 
   - platform: safe_mode
-    name: "Openspace Restart (Safe Mode OTA)"
+    name: "Livingroom Restart (Safe Mode OTA)"
 
 ...
 

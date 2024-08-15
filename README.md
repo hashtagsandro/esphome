@@ -3,4 +3,4 @@ ESPHome Repository Related Device diy or other flashed with a "opensource" firmw
 
 The code is tested by myself but I will not responsible if you brick burn and any other things happens to your devices.
 
-Try at your own risk!
+Use at your own risk!

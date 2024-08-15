@@ -29,6 +29,7 @@ esphome:
   name: study-multisensor
   platform: ESP32
   board: wemos_d1_mini32
+  comment: TEMP HUM PM 2.5 MOTION SENSOR
  
 #########################
 ### LOG CONFIGURATION ###
@@ -44,7 +45,7 @@ logger:
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
-  fast_connect: false
+  fast_connect: true
   domain: !secret domain
   ap:
     ssid: "${device_name} Hotspot"
@@ -79,7 +80,8 @@ api:
 #########################
 
 ota:
-  password: !secret ota_password
+  - platform: esphome
+    password: !secret ota_password
 
 #################################
 ### TEXT SENSOR CONFIGURATION ###
@@ -113,7 +115,7 @@ text_sensor:
 web_server:
   port: !secret web_server_port
   ota: true
-  local: false
+  local: true
   version: 2
   auth:
     username: !secret web_server_username
@@ -126,7 +128,7 @@ web_server:
 i2c:
   sda: GPIO21
   scl: GPIO22
-  scan: false
+  scan: true
 
 ##########################
 ### UART CONFIGURATION ###
@@ -143,6 +145,12 @@ uart:
 
 sensor:
 
+  ### WIFI SIGNAL ###
+
+  - platform: wifi_signal
+    name: "Study Powerstrip WiFi Signal"
+    update_interval: 60s
+
  ### BOARD TEMPERATURE ###
 
   - platform: template
@@ -158,18 +166,6 @@ sensor:
     mac_address: !secret mac_amazfit_sandro
     name: "${device_name} Amazfit Bip Sandro RSSI"
 
-  - platform: ble_rssi
-    mac_address: !secret mac_filo_black
-    name: "${device_name} Filo Black RSSI" 
-
-  - platform: ble_rssi
-    mac_address: !secret mac_filo_red
-    name: "${device_name} Filo Red RSSI"       
-
-  - platform: ble_rssi
-    mac_address: !secret mac_filo_blue
-    name: "${device_name} Filo Blue RSSI"    
-
   ### AMBIENT TEMPERATURE AND HUMIDITY ### 
 
   - platform: aht10
@@ -178,6 +174,8 @@ sensor:
       id: "${device_id}_temperature"
       unit_of_measurement: "°C"
       accuracy_decimals: 1
+      filters:
+        offset: -2
       icon: "mdi:temperature-celsius"
     humidity:
       name: "${device_name} Humidity"
@@ -193,18 +191,11 @@ sensor:
       icon: "mdi:blur"
       id: "${device_id}_pm25"
 
-  ### XIAOMI FLOWER SENSOR ###
-
-  - platform: xiaomi_hhccjcy01
-    mac_address: !secret mac_xiaomi_hhccjcy01
-    temperature:
-      name: "Ficus Ginseng Bonsai Temperature"
-    moisture:
-      name: "Ficus Ginseng Bonsai Moisture"
-    illuminance:
-      name: "Ficus Ginseng Bonsai Illuminance"
-    conductivity:
-      name: "Ficus Ginseng Bonsai Soil Conductivity"
+  ### UPTIME ###
+  
+  - platform: uptime
+    type: seconds
+    name: Uptime Sensor    
 
 ####################
 ### BLE TRACKING ###
@@ -232,18 +223,6 @@ binary_sensor:
   - platform: ble_presence
     mac_address: !secret mac_amazfit_sandro
     name: "${device_name} Amazfit Bip Sandro"
-
-  - platform: ble_presence
-    mac_address: !secret mac_filo_black
-    name: "${device_name} Filo Black"
-
-  - platform: ble_presence
-    mac_address: !secret mac_filo_red
-    name: "${device_name} Filo Red"
-
-  - platform: ble_presence
-    mac_address: !secret mac_filo_blue
-    name: "${device_name} Filo Blue"
 
 ##############################
 ### SWITCHES CONFIGURATION ###

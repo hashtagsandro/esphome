@@ -78,6 +78,7 @@ time:
 #########################
 
 api:
+  reboot_timeout: 0s
   encryption:
     key: !secret api_key
 
@@ -86,7 +87,8 @@ api:
 #########################
 
 ota:
-  password: !secret ota_password
+  - platform: esphome
+    password: !secret ota_password
 
 #################################
 ### TEXT SENSOR CONFIGURATION ###
@@ -111,7 +113,7 @@ text_sensor:
       icon: mdi:ip-network 
     mac_address:
       name: "Study Powerstrip Wifi MAC Address"
-      id: openspace_macaddress
+      id: studypowerstrip_macaddress
       icon: mdi:expansion-card
 
 ################################
@@ -120,7 +122,9 @@ text_sensor:
 
 web_server:
   port: !secret web_server_port
-  #local: true
+  ota: true
+  local: true
+  version: 2
   auth:
     username: !secret web_server_username
     password: !secret web_server_password
@@ -136,6 +140,12 @@ sensor:
   - platform: wifi_signal
     name: "Study Powerstrip WiFi Signal"
     update_interval: 60s
+  
+  ### UPTIME ###
+  
+  - platform: uptime
+    type: seconds
+    name: Uptime Sensor
 
 ###################################
 ### BINARY SENSOR CONFIGURATION ###
@@ -153,9 +163,9 @@ binary_sensor:
     on_press:
       - switch.toggle: relay_1
       - switch.toggle: relay_2
-      - switch.toggle: relay_3
+      #- switch.toggle: relay_3
       - switch.toggle: relay_4
-      - switch.toggle: relay_5
+      #- switch.toggle: relay_5
     filters:
       - delayed_on: 10ms
 
@@ -171,7 +181,7 @@ switch:
     name: monitor
     id: relay_1
     pin: GPIO05
-    restore_mode: RESTORE_DEFAULT_OFF
+    restore_mode: ALWAYS_OFF
     icon: mdi:monitor
   
   ### LAPTOP ###
@@ -180,7 +190,7 @@ switch:
     name: laptop
     id: relay_2
     pin: GPIO04
-    restore_mode: RESTORE_DEFAULT_OFF
+    restore_mode: ALWAYS_OFF
     icon: mdi:laptop
 
   ### MI DESK LAMP 2 ###
@@ -198,7 +208,7 @@ switch:
     name: nest hub 2
     id: relay_4
     pin: GPIO13
-    restore_mode: RESTORE_DEFAULT_OFF
+    restore_mode: ALWAYS_OFF
     icon: mdi:tablet
 
   ### USB ###
@@ -207,18 +217,18 @@ switch:
     name: usb study
     id: relay_5
     pin: GPIO14
-    restore_mode: RESTORE_DEFAULT_OFF
+    restore_mode: ALWAYS_ON
     icon: mdi:usb
 
   ### RESTART ###
 
   - platform: restart
-    name: "Openspace Restart"
+    name: "Study Powerstrip Restart"
 
   ### RESTART SAFE MODE ###  
 
   - platform: safe_mode
-    name: "Openspace Restart (Safe Mode OTA)"
+    name: "Study Powerstrip Restart (Safe Mode OTA)"
 
 ...
 

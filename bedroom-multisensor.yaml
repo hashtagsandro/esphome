@@ -1,4 +1,5 @@
 ---
+
 ##############################
 ### BEDROOM-MULTISENSORS ###
 ##############################
@@ -30,7 +31,8 @@ esphome:
   name: bedroom-multisensor
   platform: ESP32
   board: esp32doit-devkit-v1
- 
+  comment: TEMP HUM PM 2.5 MOTION SENSOR 
+
 #########################
 ### LOG CONFIGURATION ###
 #########################
@@ -43,8 +45,8 @@ logger:
 ##########################
 
 wifi:
-  ssid: !secret wifi_ssid #_fabbros
-  password: !secret wifi_password #_fabbros
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
   fast_connect: true
   domain: !secret domain
   ap:
@@ -80,7 +82,8 @@ api:
 #########################
 
 ota:
-  password: !secret ota_password
+  - platform: esphome
+    password: !secret ota_password
 
 #################################
 ### TEXT SENSOR CONFIGURATION ###
@@ -111,7 +114,7 @@ text_sensor:
 web_server:
   port: !secret web_server_port
   ota: true
-  local: false
+  local: true
   version: 2
   auth:
     username: !secret web_server_username
@@ -141,8 +144,6 @@ switch:
 esp32_ble_tracker:
   scan_parameters:
     active: true
-
-bluetooth_proxy:
   
 binary_sensor:
 
@@ -151,19 +152,6 @@ binary_sensor:
   - platform: ble_presence
     mac_address: !secret mac_amazfit_sandro
     name: "${device_name} Amazfit Bip Sandro"
-
-  - platform: ble_presence
-    mac_address: !secret mac_filo_black
-    name: "${device_name} Filo Black"
-
-  - platform: ble_presence
-    mac_address: !secret mac_filo_red
-    name: "${device_name} Filo Red"
-
-  - platform: ble_presence
-    mac_address: !secret mac_filo_blue
-    name: "${device_name} Filo Blue"
-
 
  ### MOTION LEFT ###
 
@@ -181,6 +169,18 @@ binary_sensor:
 
 sensor:
 
+  ### WIFI SIGNAL ###
+
+  - platform: wifi_signal
+    name: "Study Powerstrip WiFi Signal"
+    update_interval: 60s
+
+  ### BLE SIGNAL ###
+
+  - platform: ble_rssi
+    mac_address: !secret mac_amazfit_sandro
+    name: "${device_name} Amazfit Bip Sandro RSSI"
+ 
  ### TEMPERATURE AND HUMIDITY ### 
 
   - platform: aht10
@@ -190,25 +190,14 @@ sensor:
       id: "${device_id}_temperature"
       unit_of_measurement: "°C"
       accuracy_decimals: 1
+      filters:
+        offset: -2      
       icon: "mdi:temperature-celsius"
     humidity:
       name: "${device_name} Humidity"
       id: "${device_id}_humidity"
       icon: "mdi:water-percent"
     update_interval: 300s
-
-  ### BRIGHTNESS ###
-    
-#  - platform: adc
-#    pin: GPIO34
-#    name: "${device_name} Brightness"
-#    device_class: illuminance
-#    unit_of_measurement: lx
-#    attenuation: auto
-#    filters:
-#      - lambda: |-
-#          return (x / 10000.0) * 2000000.0;
-#    update_interval: 1s
 
   - platform: template
     name: "${device_name} Board Temperature"
@@ -218,30 +207,17 @@ sensor:
     update_interval: 1800s
 
   - platform: xiaomi_miscale
-    mac_address: "5C:CA:D3:F5:B5:61"
+    mac_address: !secret mac_miscale
     weight:
       name: "Xiaomi Mi Scale Weight"
     impedance:
       name: "Xiaomi Mi Scale Impedance"
 
-### BLE SIGNAL ###
-
-  - platform: ble_rssi
-    mac_address: !secret mac_amazfit_sandro
-    name: "${device_name} Amazfit Bip Sandro RSSI"
-
-  - platform: ble_rssi
-    mac_address: !secret mac_filo_black
-    name: "${device_name} Filo Black RSSI" 
-
-  - platform: ble_rssi
-    mac_address: !secret mac_filo_red
-    name: "${device_name} Filo Red RSSI"       
-
-  - platform: ble_rssi
-    mac_address: !secret mac_filo_blue
-    name: "${device_name} Filo Blue RSSI"    
-
+  ### UPTIME ###
+  
+  - platform: uptime
+    type: seconds
+    name: Uptime Sensor
 ...
 
 ### EOF ###
